@@ -4,12 +4,14 @@ import keys
 import po_api
 from datetime import date
 
+from pycaret.regression import *
+import pandas as pd
+
 # Initialize PropOddsAPI
 po = po_api.PropOddsAPI(keys.prop_odds)
 games = po.get_games()
 
 intents = discord.Intents.all()
-# handler = logging.FileHandler(filename='discord.log',encoding='utf-8',mode='w')
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -19,9 +21,9 @@ async def on_ready():
     print(f'We have logged in as {bot.user}')
 
 
-# Show NBA matchups for today
+# Shows NBA matchups for today
 @bot.command()
-async def matchups(ctx):
+async def today(ctx):
     game_count = len(games['games'])
     embed = discord.Embed(title="NBA Schedule - Games",
                           description=f'There are {game_count} games today ({date.today()}):',
@@ -37,9 +39,24 @@ async def matchups(ctx):
 
     await ctx.send(embed=embed)
 
-
+# Suggests which team to bet on using predictions from the trained ML model and money line betting odds.
 @bot.command()
-async def moneyline(ctx):
+async def predict(ctx, *, matchup):
+    loaded_model = load_model('bet_model')
+
+    dfa = pd.read_csv('data/nba_game_data_020124.csv')
+
+    prediction = predict_model(loaded_model, data=dfa)
+    # output_columns = ['TEAM_NAME', 'MATCHUP', 'prediction_label']
+
+    matchup_data = prediction[prediction['MATCHUP'] == matchup]
+    avg_prediction = matchup_data['prediction_label'].mean()
+
+    await ctx.send(f"For {matchup}: {avg_prediction:.3f}")
+
+# Outputs money line betting odds for today's matchups
+@bot.command()
+async def team_odds(ctx):
     game_ids = [game['game_id'] for game in games['games']]
 
     embed = discord.Embed(title="Money line Odds",
@@ -47,7 +64,7 @@ async def moneyline(ctx):
                           color=discord.Color.random())
     embed.set_author(name="Bet Basket Bot")
 
-    count = 1
+    game_count = 1
     for game_id in game_ids:
         # Fetch odds
         all_odds = po.get_most_recent_odds(game_id, 'moneyline')
@@ -60,19 +77,18 @@ async def moneyline(ctx):
             # Check for FanDuel odds only
             if bookie_name == 'fanduel':
 
-                embed.add_field(name=f"\nGame #{count}", value="", inline=il_val)
-                count += 1
+                embed.add_field(name=f"\nGame #{game_count}", value="", inline=il_val)
+                game_count += 1
+
                 # Iterate through outcomes (teams)
                 for outcome in bookie_data['market']['outcomes']:
                     team_name = outcome['name']
                     odds = outcome['odds']
 
-                    # await ctx.send(f"{team_name},Odds: {odds} ")
                     embed.add_field(name=f"{team_name}", value=f"Odds: {odds}", inline=il_val)
 
             il_val = not il_val
 
     await ctx.send(embed=embed)
-
 
 bot.run(keys.token, log_handler=None)
