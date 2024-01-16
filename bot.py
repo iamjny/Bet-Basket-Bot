@@ -39,6 +39,7 @@ async def today(ctx):
 
     await ctx.send(embed=embed)
 
+
 # Suggests which team to bet on using predictions from the trained ML model and money line betting odds.
 @bot.command()
 async def predict(ctx, *, matchup):
@@ -54,7 +55,9 @@ async def predict(ctx, *, matchup):
 
     await ctx.send(f"For {matchup}: {avg_prediction:.3f}")
 
+
 # Outputs money line betting odds for today's matchups
+
 @bot.command()
 async def team_odds(ctx):
     game_ids = [game['game_id'] for game in games['games']]
@@ -65,7 +68,9 @@ async def team_odds(ctx):
     embed.set_author(name="Bet Basket Bot")
 
     game_count = 1
+
     for game_id in game_ids:
+
         # Fetch odds
         all_odds = po.get_most_recent_odds(game_id, 'moneyline')
 
@@ -74,7 +79,10 @@ async def team_odds(ctx):
         for bookie_data in all_odds['sportsbooks']:
             bookie_name = bookie_data['bookie_key']
 
-            # Check for FanDuel odds only
+            if len(embed.fields) >= 9:
+                await ctx.send(embed=embed)
+                embed.clear_fields()
+
             if bookie_name == 'fanduel':
 
                 embed.add_field(name=f"\nGame #{game_count}", value="", inline=il_val)
@@ -90,5 +98,6 @@ async def team_odds(ctx):
             il_val = not il_val
 
     await ctx.send(embed=embed)
+
 
 bot.run(keys.token, log_handler=None)
