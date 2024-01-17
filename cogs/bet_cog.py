@@ -21,7 +21,7 @@ class BetCog(commands.Cog):
                               color=discord.Color.random())
         embed.set_author(name="Bet Basket Bot", url="https://github.com/iamjny/Bet-Basket-Bot")
         embed.add_field(name="!today", value="Displays today's NBA matchups", inline=True)
-        embed.add_field(name="!team_odds", value="Displays today's NBA matchups money line odds provided by FanDuel", inline=False)
+        embed.add_field(name="!ml_odds", value="Displays today's NBA matchups money line odds provided by FanDuel", inline=False)
         embed.add_field(name="!predict", value="Displays user inputted NBA matchup winning prediction using trained "
                                                "ML regression model", inline=True)
         await ctx.send(embed=embed)
