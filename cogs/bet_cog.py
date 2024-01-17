@@ -94,7 +94,7 @@ class BetCog(commands.Cog):
         prediction = predict_model(loaded_model, data=dfa)
         # output_columns = ['TEAM_NAME', 'MATCHUP', 'prediction_label']
 
-        embed = discord.Embed(title="Predict",
+        embed = discord.Embed(title="Predict winning team",
                               description="Using the Elastic Net machine learning regression model to predict the "
                                           "winning team of"
                                           " the following user inputted matchup (on a scale of 0 to 1):",
