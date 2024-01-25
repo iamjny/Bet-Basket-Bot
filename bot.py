@@ -1,9 +1,11 @@
 import discord
 from discord.ext import commands
 import keys
+import logging
 
 
 def run():
+    handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
     intents = discord.Intents.all()
     bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -12,4 +14,4 @@ def run():
         print(f'We have logged in as {bot.user}')
         await bot.load_extension("cogs.bet_cog")
 
-    bot.run(keys.token, log_handler=None)
+    bot.run(keys.token, log_handler=handler)
