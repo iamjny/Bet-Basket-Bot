@@ -17,7 +17,7 @@ class BetCog(commands.Cog):
     # Lists the commands available for this bot
     @commands.command()
     async def cmd(self, ctx):
-        embed = discord.Embed(title="Commands available",
+        embed = discord.Embed(title="Commands available 👨‍💻",
                               description="Here is a comprehensive list of available commands and their "
                                           "functionalities: ",
                               color=discord.Color.random())
@@ -35,7 +35,7 @@ class BetCog(commands.Cog):
     # Lists the team acronyms for reference when using the !predict command
     @commands.command()
     async def team_acronyms(self, ctx):
-        embed = discord.Embed(title="Team acronyms",
+        embed = discord.Embed(title="Team acronyms 📝",
                               description="In the image below, you will find a list of NBA team acronyms that you can use for the !predict command inputs:",
                               color=discord.Color.random())
         embed.set_author(name="Bet Basket Bot", url="https://github.com/iamjny/Bet-Basket-Bot")
@@ -47,7 +47,7 @@ class BetCog(commands.Cog):
     @commands.command()
     async def today(self, ctx):
         game_count = len(self.games['games'])
-        embed = discord.Embed(title="Today's NBA games",
+        embed = discord.Embed(title="Today's NBA games 📅",
                               description=f'There are {game_count} games today ({date.today()}):',
                               color=discord.Color.random())
         embed.set_author(name="Bet Basket Bot", url="https://github.com/iamjny/Bet-Basket-Bot")
@@ -66,7 +66,7 @@ class BetCog(commands.Cog):
     async def ml_odds(self, ctx):
         game_ids = [game['game_id'] for game in self.games['games']]
 
-        embed = discord.Embed(title="Money line Odds",
+        embed = discord.Embed(title="Today's money line odds 💰",
                               description=f'These are the following money line odds from FanDuel for today ({date.today()}):',
                               color=discord.Color.random())
         embed.set_author(name="Bet Basket Bot", url="https://github.com/iamjny/Bet-Basket-Bot")
@@ -108,11 +108,11 @@ class BetCog(commands.Cog):
     async def predict(self, ctx, *, matchup):
         # Loading trained model and using relevant dataset
         loaded_model = load_model('bet_model')
-        dfa = pd.read_csv('data/nba_game_data_200124.csv')
+        dfa = pd.read_csv('data/nba_game_data_280124.csv')
         prediction = predict_model(loaded_model, data=dfa)
 
-        embed = discord.Embed(title="Predict winning team",
-                              description="Using a machine learning regression model to predict the "
+        embed = discord.Embed(title="Predict winning team through ML 🤖🏀",
+                              description="Using a regression model to predict the "
                                           "winning team of"
                                           " the following user inputted matchup (on a scale of 0 to 1):",
                               color=discord.Color.random())
