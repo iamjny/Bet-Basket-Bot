@@ -13,5 +13,6 @@ def run():
     async def on_ready():
         print(f'We have logged in as {bot.user}')
         await bot.load_extension("cogs.bet_cog")
+        await bot.load_extension("cogs.track_cog")
 
     bot.run(keys.token, log_handler=handler)
