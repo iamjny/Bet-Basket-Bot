@@ -7,6 +7,8 @@ import keys
 class PropOddsAPI:
     def __init__(self, token):
         self.base_url = 'https://api.prop-odds.com'
+
+        # Replace 'keys.prop_odds' with your own API key
         self.api_key = keys.prop_odds
 
     # Gets all games that takes place today
