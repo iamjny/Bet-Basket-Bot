@@ -8,6 +8,7 @@ class TrackCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        # Establish connection to MongoDB
         self.mongo_client = MongoClient(keys.mongo_uri)
         self.db = self.mongo_client.betBasketBot
         try:
@@ -18,7 +19,7 @@ class TrackCog(commands.Cog):
             print(f"MongoDB connection error: {e}")
 
     # Register user (input) bets to database
-    @commands.command()
+    @commands.hybrid_command()
     async def register(self, ctx, matchup, team, outcome):
         embed = discord.Embed(title="Register betting pick to compare ✅",
                               description="Tracking money line team bets for users in the server to compare",
@@ -40,28 +41,33 @@ class TrackCog(commands.Cog):
         await ctx.send(embed=embed)
 
     # Displays user (input) bets from database
-    @commands.command()
+    @commands.hybrid_command()
     async def dashboard(self, ctx):
-        embed = discord.Embed(title="Betting dashboard 🏆", description="Compare your winnings/losses with other users",
-                              color=discord.Color.random())
-        embed.set_author(name="Bet Basket Bot", url="https://github.com/iamjny/Bet-Basket-Bot")
+        # Check for empty database
+        bets_cursor = list(self.db.user_bets.find())
+        if len(bets_cursor) == 0:
+            await ctx.send("Error: There are no bets to display on the dashboard!")
 
-        user_bets = self.db.user_bets.find()
+        else:
 
-        for user_bet in user_bets:
-            username = user_bet["Username"]
-            matchup = user_bet["Matchup"]
-            team_to_win = user_bet["Team to win"]
-            outcome = user_bet["Outcome"]
+            embed = discord.Embed(title="Betting dashboard 🏆", description="Compare your winnings/losses with other users",
+                                  color=discord.Color.random())
+            embed.set_author(name="Bet Basket Bot", url="https://github.com/iamjny/Bet-Basket-Bot")
 
-            embed.add_field(name=username,
-                            value=f"```\nMatchup: {matchup}\nTeam to win: {team_to_win}\nOutcome: {outcome}\n```",
-                            inline=True)
+            for user_bet in bets_cursor:
+                username = user_bet["Username"]
+                matchup = user_bet["Matchup"]
+                team_to_win = user_bet["Team to win"]
+                outcome = user_bet["Outcome"]
 
-        await ctx.send(embed=embed)
+                embed.add_field(name=username,
+                                value=f"```\nMatchup: {matchup}\nTeam to win: {team_to_win}\nOutcome: {outcome}\n```",
+                                inline=True)
+
+            await ctx.send(embed=embed)
 
     # Deletes all data in database
-    @commands.command()
+    @commands.hybrid_command()
     async def delete_db(self, ctx):
         x = self.db.user_bets.delete_many({})
         await ctx.send(f"{x.deleted_count} document(s) deleted.")
