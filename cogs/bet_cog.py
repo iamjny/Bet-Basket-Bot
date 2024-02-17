@@ -73,42 +73,46 @@ class BetCog(commands.Cog):
     async def ml_odds(self, ctx):
         game_ids = [game['game_id'] for game in self.games['games']]
 
-        embed = discord.Embed(title="Today's money line odds 💰",
-                              description=f'These are the following money line odds from FanDuel for today ({date.today()}):',
-                              color=discord.Color.random())
-        embed.set_author(name="Bet Basket Bot", url="https://github.com/iamjny/Bet-Basket-Bot")
+        if not game_ids:
+            await ctx.send('Error: There are no money line odds available since there are no games today.')
+        else:
 
-        game_count = 1
+            embed = discord.Embed(title="Today's money line odds 💰",
+                                  description=f'These are the following money line odds from FanDuel for today ({date.today()}):',
+                                  color=discord.Color.random())
+            embed.set_author(name="Bet Basket Bot", url="https://github.com/iamjny/Bet-Basket-Bot")
 
-        for game_id in game_ids:
+            game_count = 1
 
-            # Fetch odds
-            all_odds = self.po.get_most_recent_odds(game_id, 'moneyline')
-            inline_value = True
+            for game_id in game_ids:
 
-            for bookie_data in all_odds['sportsbooks']:
-                bookie_name = bookie_data['bookie_key']
+                # Fetch odds
+                all_odds = self.po.get_most_recent_odds(game_id, 'moneyline')
+                inline_value = True
 
-                if len(embed.fields) >= 9:
-                    await ctx.send(embed=embed)
-                    embed.clear_fields()
+                for bookie_data in all_odds['sportsbooks']:
+                    bookie_name = bookie_data['bookie_key']
 
-                if bookie_name == 'fanduel':
+                    if len(embed.fields) >= 9:
+                        await ctx.send(embed=embed)
+                        embed.clear_fields()
 
-                    embed.add_field(name=f"\nGame #{game_count}", value="", inline=inline_value)
-                    game_count += 1
+                    if bookie_name == 'fanduel':
 
-                    # Iterate through outcomes (teams)
-                    for outcome in bookie_data['market']['outcomes']:
-                        team_name = outcome['name']
-                        odds = outcome['odds']
+                        embed.add_field(name=f"\nGame #{game_count}", value="", inline=inline_value)
+                        game_count += 1
 
-                        embed.add_field(name=f"{team_name}", value=f"Odds: {odds}", inline=inline_value)
+                        # Iterate through outcomes (teams)
+                        for outcome in bookie_data['market']['outcomes']:
+                            team_name = outcome['name']
+                            odds = outcome['odds']
 
-                inline_value = not inline_value
+                            embed.add_field(name=f"{team_name}", value=f"Odds: {odds}", inline=inline_value)
 
-        if len(embed.fields) > 0:
-            await ctx.send(embed=embed)
+                    inline_value = not inline_value
+
+            if len(embed.fields) > 0:
+                await ctx.send(embed=embed)
 
     # Predicts chances of a team winning in a user input matchup
     @commands.hybrid_command()
