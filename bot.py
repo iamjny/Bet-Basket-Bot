@@ -30,5 +30,12 @@ def run():
         await bot.tree.sync()
         await ctx.send('Command tree synced.')
 
+    # Shutdown bot
+    @bot.command()
+    @commands.is_owner()
+    async def close(ctx):
+        print("Bot is now shutting down...")
+        await bot.close()
+
     # Replace 'keys.token' with your own token
     bot.run(keys.token, log_handler=handler)
