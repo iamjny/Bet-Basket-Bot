@@ -73,8 +73,13 @@ class BetCog(commands.Cog):
     async def ml_odds(self, ctx):
         game_ids = [game['game_id'] for game in self.games['games']]
 
+        # Check if there are any money line odds available
         if not game_ids:
-            await ctx.send('Error: There are no money line odds available since there are no games today.')
+            embed = discord.Embed(title="Today's money line odds 💰",
+                                  description=f'There are no money line odds available since there are no games today.',
+                                  color=discord.Color.random())
+            embed.set_author(name="Bet Basket Bot", url="https://github.com/iamjny/Bet-Basket-Bot")
+            await ctx.send(embed=embed)
         else:
 
             embed = discord.Embed(title="Today's money line odds 💰",
