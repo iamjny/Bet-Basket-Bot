@@ -37,7 +37,20 @@ Bet Basket Bot is a Discord bot written in Python tailored for NBA betting enthu
 
 ## Usage
 
-(...)
+Once the bot is up and running on your Discord server, you can interact with it using the following commands:
+
+- `today`: Display today's NBA matchups.
+- `ml_odds`: Display real-time money line odds for NBA matchups.
+- `predict [matchup]`: Predict the winning team in a specific NBA matchup.
+- `team_acronyms`: View a list of NBA team acronyms for reference.
+- `register [matchup] [team] [outcome]`: Register a bet in the database.
+- `dashboard`: View and compare registered bets.
+- `delete_db`: Delete bets from the database.
+
+Here are some examples of the command outputs:
+
+![](https://github.com/iamjny/Bet-Basket-Bot/blob/main/images/mlodds_sc.JPG)
+![](https://github.com/iamjny/Bet-Basket-Bot/blob/main/images/predict_today_sc.JPG)
 
 ## Contributing
 
